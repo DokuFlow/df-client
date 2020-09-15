@@ -12,7 +12,7 @@ class DokuflowClient {
 
   model<T>(modelId: string): DokuflowModelClient<T> {
     return new DokuflowModelClient<T>({
-      baseUrl: `${dokuflowLaxBaseUrl}/${modelId}`,
+      baseUrl: `${dokuflowLaxBaseUrl}/${this.config.spaceName}/${modelId}`,
       apiKey: this.config.apiKey,
     });
   }
