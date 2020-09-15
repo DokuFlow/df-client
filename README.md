@@ -1,3 +1,3 @@
 # df-client
 
-client api to use [dokuflow.com](https://dokuflow.com/) service
+client API to use [dokuflow.com](https://dokuflow.com/) service
