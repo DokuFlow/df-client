@@ -17,7 +17,9 @@ export type GetListOptions<T, S extends keyof T> = {
   filters?: FilterOperation<T, keyof T>[];
 };
 
-export type GetListResponse<T, S extends keyof T> = Promise<AxiosResponse<Pick<T, S>[]>>;
+export type GetListResponse<T, S extends keyof T> = Promise<
+  AxiosResponse<Pick<T, S>[]>
+>;
 
 export type MutationResponse<T> = {
   isSuccess: boolean;
@@ -46,14 +48,16 @@ class DokuflowModelClient<T> {
   }
 
   getList<S extends keyof DokuflowDocument<T>>(
-    options: GetListOptions<DokuflowDocument<T>, S>,
+    options: GetListOptions<DokuflowDocument<T>, S>
   ): GetListResponse<DokuflowDocument<T>, S> {
     let url = this.getBaseUrl();
 
     if (options.filters) {
       const filterQueryString = [];
       for (const filter of options.filters) {
-        filterQueryString.push(`$$${filter.field}=${filter.operation}||${filter.value}`);
+        filterQueryString.push(
+          `$$${filter.field}=${filter.operation}||${filter.value}`
+        );
       }
 
       if (filterQueryString.length) {
@@ -68,27 +72,38 @@ class DokuflowModelClient<T> {
     return Axios.get(url);
   }
 
-  async getFirst<S extends keyof DokuflowDocument<T>>(options: GetListOptions<DokuflowDocument<T>, S>) {
+  async getFirst<S extends keyof DokuflowDocument<T>>(
+    options: GetListOptions<DokuflowDocument<T>, S>
+  ) {
     const listResponse = await this.getList(options);
-    if (listResponse.data && Array.isArray(listResponse.data) && listResponse.data.length < 1) {
+    if (
+      listResponse.data &&
+      Array.isArray(listResponse.data) &&
+      listResponse.data.length < 1
+    ) {
       return null;
     }
 
     return listResponse.data[0];
   }
 
-  create(model: Partial<T>): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
+  create(
+    model: Partial<T>
+  ): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
     return Axios.post(this.getBaseUrl(), model);
   }
 
   update(
-    model: Pick<DokuflowDocument<T>, 'ID'> & Partial<Omit<DokuflowDocument<T>, 'ID'>>,
+    model: Pick<DokuflowDocument<T>, 'ID'> &
+      Partial<Omit<DokuflowDocument<T>, 'ID'>>
   ): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
     const { ID, ...modelContent } = model;
     return Axios.patch(this.getBaseUrl(ID), modelContent);
   }
 
-  delete(modelId: string): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
+  delete(
+    modelId: string
+  ): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
     return Axios.delete(this.getBaseUrl(modelId));
   }
 }
