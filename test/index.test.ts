@@ -1,4 +1,4 @@
-import DokuflowClient from '../index';
+import DokuflowClient from '../src/index';
 
 test('Create Client', () => {
   const client = new DokuflowClient({
