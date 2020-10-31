@@ -68,6 +68,15 @@ class DokuflowModelClient<T> {
     return Axios.get(url);
   }
 
+  async getFirst<S extends keyof DokuflowDocument<T>>(options: GetListOptions<DokuflowDocument<T>, S>) {
+    const listResponse = await this.getList(options);
+    if (listResponse.data && Array.isArray(listResponse.data) && listResponse.data.length < 1) {
+      return null;
+    }
+
+    return listResponse.data[0];
+  }
+
   create(model: Partial<T>): Promise<AxiosResponse<MutationResponse<DokuflowDocument<T>>>> {
     return Axios.post(this.getBaseUrl(), model);
   }
