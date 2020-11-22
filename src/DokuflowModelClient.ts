@@ -64,7 +64,7 @@ class DokuflowModelClient<T> {
         switch (filter.operation) {
           case 'IN':
             filterQueryString.push(
-              `$$${filter.field}=${filter.operation}||${filter.value.join('%')}`
+              `$$${filter.field}=${filter.operation}||${filter.value.join('|')}`
             );
             break;
           default:
