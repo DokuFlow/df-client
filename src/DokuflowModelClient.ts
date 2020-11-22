@@ -4,13 +4,19 @@ export type DokuflowDocument<T> = {
   ID: string;
 } & T;
 
-export type Operation = 'LIKE' | 'EQ';
+export type Operation = 'LIKE' | 'EQ' | 'IN';
 
-export type FilterOperation<T, K extends keyof T> = {
-  field: K;
-  operation: Operation;
-  value: T[K];
-};
+export type FilterOperation<T, K extends keyof T> =
+  | {
+      field: K;
+      operation: 'LIKE' | 'EQ';
+      value: T[K];
+    }
+  | {
+      field: K;
+      operation: 'IN';
+      value: T[K][];
+    };
 
 export type GetListOptions<T, S extends keyof T> = {
   selections?: S[];
@@ -55,9 +61,18 @@ class DokuflowModelClient<T> {
     if (options.filters) {
       const filterQueryString = [];
       for (const filter of options.filters) {
-        filterQueryString.push(
-          `$$${filter.field}=${filter.operation}||${filter.value}`
-        );
+        switch (filter.operation) {
+          case 'IN':
+            filterQueryString.push(
+              `$$${filter.field}=${filter.operation}||${filter.value.join('%')}`
+            );
+            break;
+          default:
+            filterQueryString.push(
+              `$$${filter.field}=${filter.operation}||${filter.value}`
+            );
+            break;
+        }
       }
 
       if (filterQueryString.length) {
